@@ -29,13 +29,16 @@ myname="$(basename "$0" | awk -F'.' '{print $1}')";
 configdir="/opt/icewarp/scripts/";
 outputpath="$(readcfg outputpath)";
 outputfile="${outputpath}/${myname}.mon";
-nfstestfile="/mnt/data/storage.dat";
+ctimeout=60;
 toolSh="/opt/icewarp/tool.sh";
 
 # MAIN
 touch ${outputpath}/${myname}.lck
-# < place your check here >
-# < and return the result to >
-# < ${outputpath}/${myname}.mon >
-
+HTTP_RESPONSE="$(timeout -k ${ctimeout} ${ctimeout} curl -s -k --connect-timeout 5 -o /dev/null -w "%{http_code}" -m 5 https://"127.0.0.1"/webmail/)"
+if [ "${HTTP_RESPONSE}" == "200" ]; then
+                        echo "OK" > ${outputpath}/${myname}.mon;slog "INFO" "IceWarp HTTP OK.";
+                          else
+                        echo "FAIL" > ${outputpath}/${myname}.mon;slog "ERROR" "IceWarp HTTP FAIL!";exit 1;
+fi
+exit 0
 

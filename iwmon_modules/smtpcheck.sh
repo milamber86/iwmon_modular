@@ -31,11 +31,14 @@ outputpath="$(readcfg outputpath)";
 outputfile="${outputpath}/${myname}.mon";
 nfstestfile="/mnt/data/storage.dat";
 toolSh="/opt/icewarp/tool.sh";
+ctimeout=60;
 
 # MAIN
 touch ${outputpath}/${myname}.lck
-# < place your check here >
-# < and return the result to >
-# < ${outputpath}/${myname}.mon >
-
+SMTP_RESPONSE="$(echo "QUIT" | timeout -k ${ctimeout} ${ctimeout} nc -w 3 "127.0.0.1" 25 | egrep -o "^220" | head -1)"
+if [ "${SMTP_RESPONSE}" == "220" ]; then
+                        echo "OK" > ${outputpath}/${myname}.mon;slog "INFO" "IceWarp SMTP OK.";
+                          else
+                        echo "FAIL" > ${outputpath}/${myname}.mon;slog "ERROR" "IceWarp SMTP FAIL!";
+fi
 

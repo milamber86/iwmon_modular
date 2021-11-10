@@ -34,8 +34,13 @@ toolSh="/opt/icewarp/tool.sh";
 
 # MAIN
 touch ${outputpath}/${myname}.lck
-# < place your check here >
-# < and return the result to >
-# < ${outputpath}/${myname}.mon >
-
+# get icewarp control version string
+result="$(timeout -k 50 50 ${toolSh} get system C_Version | awk '{print $2}' | tr -d '.')";
+re='^[0-9]+$'
+if ! [[ $result =~ $re ]]
+  then
+    echo "Failed to get IW version using tool."; exit 1;
+  else
+    echo "$result" > ${outputpath}/${myname}.mon; exit 0;
+fi
 

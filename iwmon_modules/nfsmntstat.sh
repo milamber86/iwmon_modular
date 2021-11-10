@@ -30,12 +30,16 @@ configdir="/opt/icewarp/scripts/";
 outputpath="$(readcfg outputpath)";
 outputfile="${outputpath}/${myname}.mon";
 nfstestfile="/mnt/data/storage.dat";
-toolSh="/opt/icewarp/tool.sh";
 
-# MAIN
+# MAIN 
+# nfs mount available check
 touch ${outputpath}/${myname}.lck
-# < place your check here >
-# < and return the result to >
-# < ${outputpath}/${myname}.mon >
-
+if [ -f "${nfstestfile}" ]
+  then
+  echo "OK" > "${outputfile}";slog "INFO" "NFS mount OK.";
+  exit 0 
+  else
+  echo "FAIL" > "${outputfile}";slog "ERROR" "NFS mount FAIL!";
+  exit 1
+fi
 

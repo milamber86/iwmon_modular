@@ -29,13 +29,16 @@ myname="$(basename "$0" | awk -F'.' '{print $1}')";
 configdir="/opt/icewarp/scripts/";
 outputpath="$(readcfg outputpath)";
 outputfile="${outputpath}/${myname}.mon";
-nfstestfile="/mnt/data/storage.dat";
 toolSh="/opt/icewarp/tool.sh";
+ctimeout=60;
 
 # MAIN
 touch ${outputpath}/${myname}.lck
-# < place your check here >
-# < and return the result to >
-# < ${outputpath}/${myname}.mon >
-
+IMAP_RESPONSE="$(echo ". logout" | timeout -k ${ctimeout} ${ctimeout} nc -w 3 "127.0.0.1" 143 | egrep -o "\* OK " | egrep -o "OK")"
+if [ "${IMAP_RESPONSE}" == "OK" ]; then
+                        echo "OK" > ${outputpath}/${myname}.mon;slog "INFO" "IceWarp IMAP OK.";
+                          else
+                        echo "FAIL" > ${outputpath}/${myname}.mon;slog "ERROR" "IceWarp IMAP FAIL!";exit 1;
+fi
+exit 0
 

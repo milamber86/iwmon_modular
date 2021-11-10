@@ -34,8 +34,21 @@ toolSh="/opt/icewarp/tool.sh";
 
 # MAIN
 touch ${outputpath}/${myname}.lck
-# < place your check here >
-# < and return the result to >
-# < ${outputpath}/${myname}.mon >
-
+super="$(readcfg "super")";
+tst="$(timeout -k 6 6 ${toolSh} get system C_Accounts_Policies_SuperUserPassword)"
+if [[ $? -eq 0 ]]
+  then
+  result="$(echo "${tst}" | awk '{print $2}')";
+  else
+  echo "NA" > ${outputpath}/${myname}.mon;slog "ERROR" "Failed to get value from API using tool.sh during IceWarp config check!";
+  exit 1
+fi
+if [[ "${super}" == "${result}" ]]
+  then
+  echo "OK" > ${outputpath}/${myname}.mon;slog "INFO" "IceWarp config reset check OK.";
+  exit 0
+  else
+  echo "FAIL" > ${outputpath}/${myname}.mon;slog "ERROR" "IceWarp config reset check FAIL!";
+  exit 1
+fi
 
