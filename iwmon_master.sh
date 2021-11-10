@@ -368,9 +368,9 @@ if [[ "${1}" == "run" ]]
     ;;
     smtpstat) runcheck smtpstat "${3}";
     ;;
-    emaildelivery) runcheck checkemaildelivery;
+    emaildelivery) runcheck emaildelivery;
     ;;
-   all) for I in smtpcheck imapcheck xmppcheck grwcheck wccheck wclogin easlogin checkemaildelivery nfsmntstat nfsreadspeed nfswritespeed cfgstat iwvercheck iwbackupcheck;
+   all) for I in smtpcheck imapcheck xmppcheck grwcheck wccheck wclogin easlogin emaildelivery nfsmntstat nfsreadspeed nfswritespeed cfgstat iwvercheck iwbackupcheck;
       do
       runcheck ${I}
       done
@@ -427,7 +427,7 @@ elif [[ "${1}" == "get" ]]
     ;;
     queuestat) getstat queuestat "${3}";
     ;;
-    emaildelivery) getstat checkemaildelivery;
+    emaildelivery) getstat emaildelivery;
     ;;
    all) printStats;
     ;;
@@ -439,4 +439,3 @@ elif [[ ("${1}" != "run") || ("${1}" != "get") ]]
     printUsage;
 fi
 exit $?
-
