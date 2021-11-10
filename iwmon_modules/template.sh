@@ -29,7 +29,7 @@ myname="$(basename "$0" | awk -F'.' '{print $1}')";
 configdir="/opt/icewarp/scripts/";
 outputpath="$(readcfg outputpath)";
 outputfile="${outputpath}/${myname}.mon";
-nfstestfile="/mnt/data/storage.dat";
+ctimeout=60;
 toolSh="/opt/icewarp/tool.sh";
 
 # MAIN
