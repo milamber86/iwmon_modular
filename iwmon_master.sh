@@ -1,3 +1,4 @@
+#!/bin/bash
 #VARS
 HOST="127.0.0.1";
 SNMPPORT="161"
@@ -92,6 +93,7 @@ timeout -k 3 3 ${toolSh} set system C_Accounts_Policies_Pass_DenyExport 1 > /dev
 writecfg "EASUser" "${USER}"
 writecfg "EASPass" "${PASS}"
 writecfg "EASVers" "${aVER}"
+writecfg "nfstestdir" "${nfstestdir}"
 writecfg "wctestemail" "$(/opt/icewarp/tool.sh export account "*@*" u_type | grep ",0" | sed -r 's|,0,||' | head -1)"
 echo "Select and configure test account email for webclient monitoring."
 echo "Example config for account webtest@testdomain.local:"
@@ -188,7 +190,7 @@ local outputpath="$(readcfg outputpath)";
 echo "IceWarp stats for ${HOSTNAME} at $(date)"
 echo "last value update - service: check result"
 echo "--- Status ( OK | FAIL ):"
-for SIMPLECHECK in iwvercheck smtpcheck imapcheck xmppcheck grwcheck wccheck nfsmntstat cfgstat iwbackupcheck
+for SIMPLECHECK in iwvercheck smtpcheck imapcheck xmppcheck grwcheck wccheck nfsmntstat nfsreadstat nfswritestat cfgstat iwbackupcheck
     do
     echo -n "$(stat -c'%y' "${outputpath}/${SIMPLECHECK}.mon") - "
     echo -n "${SIMPLECHECK}: "
@@ -215,6 +217,13 @@ for SMTPSTAT in msgout msgin msgfail msgfaildata msgfailvirus msgfailcf msgfaile
     echo -n "${SMTPSTAT}: "
     getstat "smtpstat" "${SMTPSTAT}"
 done
+echo "--- PHP-FPM workers running:"
+echo -n "$(stat -c'%y' "${outputpath}/phpmaster.mon") - master ( should be exactly 1 ): "
+getstat "phpmaster"
+echo -n "$(stat -c'%y' "${outputpath}/phpmaster.mon") - slaves ( should be less or equal to slaves max ): "
+getstat "phpslave"
+echo -n "$(stat -c'%y' "${outputpath}/phpmaster.mon") - slaves max ( from FCGI_THREADPOOL in <iwconfigpath>/webserver.dat ): "
+getstat "phpslavemax"
 echo "--- WebClient and ActiveSync:"
 echo -n "$(stat -c'%y' "${outputpath}/wclogin.mon") - "
 echo -n "WebClient login: "
@@ -344,9 +353,9 @@ if [[ "${1}" == "run" ]]
     ;;
     nfs) runcheck nfsmntstat;
     ;;
-    nfsreadspeed) runcheck nfsreadspeed;
+    nfsreadstat) runcheck nfsreadstat;
     ;;
-    nfswritespeed) runcheck nfswritespeed;
+    nfswritestat) runcheck nfswritestat;
     ;;
     smtp) runcheck smtpcheck;
     ;;
@@ -370,7 +379,9 @@ if [[ "${1}" == "run" ]]
     ;;
     emaildelivery) runcheck emaildelivery;
     ;;
-   all) for I in smtpcheck imapcheck xmppcheck grwcheck wccheck wclogin easlogin emaildelivery nfsmntstat nfsreadspeed nfswritespeed cfgstat iwvercheck iwbackupcheck;
+    phpcheck) runcheck phpcheck;
+    ;;
+   all) for I in smtpcheck imapcheck xmppcheck grwcheck wccheck wclogin easlogin emaildelivery nfsmntstat nfsreadstat nfswritestat cfgstat iwvercheck iwbackupcheck phpcheck;
       do
       runcheck ${I}
       done
@@ -401,6 +412,10 @@ elif [[ "${1}" == "get" ]]
     ;;
     nfs) getstat nfsmntstat;
     ;;
+    nfsreadstat) getstat nfsreadstat;
+    ;;
+    nfswritestat) getstat nfswritestat;
+    ;;
     nfsreadspeed) getstat nfsreadspeed;
     ;;
     nfswritespeed) getstat nfswritespeed;
@@ -429,7 +444,13 @@ elif [[ "${1}" == "get" ]]
     ;;
     emaildelivery) getstat emaildelivery;
     ;;
-   all) printStats;
+    phpmaster) getststat phpmaster;
+    ;;
+    phpslave) getstat phpslave;
+    ;;
+    phpslavemax) getstat phpslavemax;
+    ;;
+    all) printStats;
     ;;
     *) printUsage;
     ;;
