@@ -188,7 +188,7 @@ local outputpath="$(readcfg outputpath)";
 echo "IceWarp stats for ${HOSTNAME} at $(date)"
 echo "last value update - service: check result"
 echo "--- Status ( OK | FAIL ):"
-for SIMPLECHECK in iwvercheck smtpcheck imapcheck xmppcheck grwcheck wccheck nfsmntstat nfsreadspeed nfswritespeed cfgstat iwbackupcheck
+for SIMPLECHECK in iwvercheck smtpcheck imapcheck xmppcheck grwcheck wccheck nfsmntstat cfgstat iwbackupcheck
     do
     echo -n "$(stat -c'%y' "${outputpath}/${SIMPLECHECK}.mon") - "
     echo -n "${SIMPLECHECK}: "
