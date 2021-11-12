@@ -267,8 +267,11 @@ Synopsis
     available smtp stats: msgout, msgin, msgfail, msgfaildata, msgfailvirus, msgfailcf, msgfailextcf, msgfailrule
     ( for more details, see https://esupport.icewarp.com/index.php?/Knowledgebase/Article/View/180/16/snmp-in-icewarp )
 
-    iwmon.sh run/get all silent/verbose
-    get all stats in one run and optionally print the stats to STDOUT
+    iwmon.sh get all
+    prints all gathered stats to STDOUT
+
+    iwmon.sh run all
+    performs all checks in one run
 
     ---
     Performs healthchecks and queries service connection number stats and smtp
