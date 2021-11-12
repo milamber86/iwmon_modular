@@ -42,31 +42,36 @@ outg) queue_outgoing_count=$(timeout -k ${ctimeout} ${ctimeout} find ${mail_outp
       if [[ ${?} -eq 0 ]]; then
                            echo "${queue_outgoing_count}" > ${outputfile};
                            else
-                           echo "9999" > ${outputfile};exit 1;
+                           echo "9999" > ${outputfile};
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 inc)  queue_incoming_count=$(timeout -k ${ctimeout} ${ctimeout} find ${mail_inpath} -maxdepth 1 -type f -name "*.dat" | wc -l);
       if [[ ${?} -eq 0 ]]; then
                            echo "${queue_incoming_count}" > ${outputfile};
                            else
-                           echo "9999" > ${outputpath}/${outputfile};exit 1;
+                           echo "9999" > ${outputpath}/${outputfile};
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 retr) queue_outgoing_retry_count=$(timeout -k ${ctimeout} ${ctimeout} find ${mail_outpath}retry/ ${mail_outpath}priority_* -type f | wc -l);
       if [[ ${?} -eq 0 ]]; then
                            echo "${queue_outgoing_retry_count}" > ${outputfile};
                            else
-                           echo "9999" > ${outputfile};exit 1;
+                           echo "9999" > ${outputfile};
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 tmp)  queue_tmp_count=$(timeout -k ${ctimeout} ${ctimeout} find ${mail_tmppath}SMTP/ -type f | wc -l);
       if [[ ${?} -eq 0 ]]; then
                            echo "${queue_tmp_count}" > ${outputfile};
                            else
-                           echo "9999" > ${outputfile};exit 1;
+                           echo "9999" > ${outputfile};
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 *)    echo "Invalid argument. Use IceWarp queue name: outg, inc, retr"
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 esac
 exit 0

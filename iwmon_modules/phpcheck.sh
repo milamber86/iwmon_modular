@@ -1,3 +1,4 @@
+i#!/bin/bash
 cleanup() {
 /usr/bin/rm -f "${outputpath}/${myname}.lck"
 }
@@ -33,14 +34,27 @@ nfstestfile="/mnt/data/storage.dat";
 toolSh="/opt/icewarp/tool.sh";
 
 # MAIN
+# Multiple PHP Master processes check
 touch ${outputpath}/${myname}.lck
-if [[ -f ${outputpath}/iwbackupstatus.mon ]]
+phpmasters="$(ps aux | grep "php-fpm: master process" | grep -v grep | wc -l)";
+echo ${phpmasters} > ${outputpath}/phpmaster.mon;
+if [[ ${phpmasters} -gt 1 ]]
   then
-    cat ${outputpath}/iwbackupstatus.mon > ${outputpath}/${myname}.mon
+    slog "WARNING" "Multiple PHP Master processes";
   else
-    echo "Backup status file ${outputpath}/iwbackupstatus.mon not found."
-    exit 1
+    slog "OK" "PHP Master check OK";
+fi
+# PHP Worker amount check
+phpworkers="$(ps aux | grep "php-fpm: pool www" | grep -v grep | wc -l)";
+configpath="$(timeout -k 6 6 ${toolSh} get system C_ConfigPath | awk '{print $2}')";
+workerconfig="$(cat ${configpath}/webserver.dat | grep "<FCGI_THREADPOOL>" | sed -r 's|<FCGI_THREADPOOL>(.*)</FCGI_THREADPOOL>|\1|' | tr -dc '[:digit:]')";
+echo ${workerconfig} > ${outputpath}/phpslavemax.mon;
+echo ${phpworkers} > ${outputpath}/phpslave.mon;
+if [[ ${phpworkers} -gt 0 ]]
+  then
+    slog "OK" "PHP Workers running (${phpworkers})";
+  else
+    slog "INFO" "PHP Workers not running";
 fi
 exit 0
-
 

@@ -29,18 +29,23 @@ myname="$(basename "$0" | awk -F'.' '{print $1}')";
 configdir="/opt/icewarp/scripts/";
 outputpath="$(readcfg outputpath)";
 outputfile="${outputpath}/${myname}.mon";
-nfstestfile="/mnt/data/storage.dat";
 toolSh="/opt/icewarp/tool.sh";
+nfsmaxspeed=7000;
 
 # MAIN
 touch ${outputpath}/${myname}.lck
-if [[ -f ${outputpath}/iwbackupstatus.mon ]]
-  then
-    cat ${outputpath}/iwbackupstatus.mon > ${outputpath}/${myname}.mon
-  else
-    echo "Backup status file ${outputpath}/iwbackupstatus.mon not found."
-    exit 1
+nfstestdir="$(readcfg nfstestdir)";
+max=$((nfsmaxspeed*1000))
+# grep AVG speed for ioping test
+result=$(/usr/bin/ioping -c 4 -BDW ${nfstestdir} | tail -1 | awk '{print $7}')
+#echo "write speed: $((result/1000)) us"
+if [ $result -lt $max ]; then
+  freturn=OK;slog "INFO" "NFS write speed is OK.";
+else
+  freturn=FAIL;slog "ERROR" "NFS write speed FAIL! Is slower than $nfsmaxspeed ms.";
 fi
-exit 0
 
+echo "${freturn}" > ${outputpath}/${myname}.mon;
+echo "$(dc <<<"2 k $result 1000 / p" | awk '{printf "%f", $0}')" > ${outputpath}/nfswritespeed.mon;
+if [[ "${freturn}" == "OK" ]]; then return 0;else return 1;fi
 

@@ -29,29 +29,23 @@ myname="$(basename "$0" | awk -F'.' '{print $1}')";
 configdir="/opt/icewarp/scripts/";
 outputpath="$(readcfg outputpath)";
 outputfile="${outputpath}/${myname}.mon";
-ctimeout=60;
-HOST="127.0.0.1";
 toolSh="/opt/icewarp/tool.sh";
-FOLDER="INBOX";
-aURI="000EASHealthCheck000"
-aTYPE="IceWarpAnnihilator"
+nfsmaxspeed=5000;
 
 # MAIN
 touch ${outputpath}/${myname}.lck
-USER=$(readcfg "EASUser");
-PASS=$(readcfg "EASPass");
-aVER=$(readcfg "EASVers");
-start=`date +%s%N | cut -b1-13`
-result=`/usr/bin/curl -s -k --connect-timeout ${ctimeout} -m ${ctimeout} --basic --user "$USER:$PASS" -H "Expect: 100-continue" -H "Host: $HOST" -H "MS-ASProtocolVersion: ${aVER}" -H "Connection: Keep-Alive" -A "${aTYPE}" --data-binary @${configdir}/activesync.txt -H "Content-Type: application/vnd.ms-sync.wbxml" "https://$HOST/Microsoft-Server-ActiveSync?User=$USER&DeviceId=$aURI&DeviceType=$aTYPE&Cmd=FolderSync" | strings`
-end=`date +%s%N | cut -b1-13`
-runtime=$((end-start))
-if [[ $result == *$FOLDER* ]]
-  then
-    freturn=OK;slog "INFO" "ActiveSync login check OK.";
-  else
-    freturn=FAIL;slog "ERROR" "ActiveSync login check FAIL!";
+nfstestdir="$(readcfg nfstestdir)";
+max=$((nfsmaxspeed*1000))
+# grep AVG speed for ioping test
+result=$(/usr/bin/ioping -c 4 -BD ${nfstestdir} | tail -1 | awk '{print $7}')
+#echo "read speed: $((result/1000)) us"
+if [ $result -lt $max ]; then
+  freturn=OK;slog "INFO" "NFS read speed is OK.";
+else
+  freturn=FAIL;slog "ERROR" "NFS read speed FAIL! Is slower than $nfsmaxspeed ms.";
 fi
+
 echo "${freturn}" > ${outputpath}/${myname}.mon;
-echo "${runtime}" > ${outputpath}/easresponse.mon;
+echo "$(dc <<<"2 k $result 1000 / p" | awk '{printf "%f", $0}')" > ${outputpath}/nfsreadspeed.mon;
 if [[ "${freturn}" == "OK" ]]; then exit 0;else exit 1;fi
 

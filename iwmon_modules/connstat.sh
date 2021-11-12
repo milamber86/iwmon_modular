@@ -1,8 +1,3 @@
-cleanup() {
-/usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
-}
-trap cleanup INT TERM ERR EXIT
-
 # read setting from configfile
 readcfg() { # ( setting_name -> setting_value )
 result="$(/usr/bin/grep "${1}" ${configdir}/iwmon.cfg | awk -F ':' '{print $2}' )";
@@ -47,6 +42,7 @@ smtp) local conn_smtp_count="$(iwsnmpget "8.1")";
               else
               echo "99999" > ${outputpath}/${myname}_smtp.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 pop)  local conn_pop3_count="$(iwsnmpget "8.2")";
       if [[ "${conn_pop3_count}" != "Fail" ]]
@@ -55,7 +51,7 @@ pop)  local conn_pop3_count="$(iwsnmpget "8.2")";
               else
               echo "99999" > ${outputpath}/${myname}_pop.mon;
       fi
-
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 imap) local conn_imap_count="$(iwsnmpget "8.3")";
       if [[ "${conn_imap_count}" != "Fail" ]]
@@ -64,6 +60,7 @@ imap) local conn_imap_count="$(iwsnmpget "8.3")";
               else
               echo "99999" > ${outputpath}/${myname}_imap.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 xmpp) local conn_im_count_server="$(iwsnmpget "8.4")";
       local conn_im_count_client="$(iwsnmpget "10.4")";
@@ -75,6 +72,7 @@ xmpp) local conn_im_count_server="$(iwsnmpget "8.4")";
             echo "99999" > ${outputpath}/${myname}_xmpp.mon;
             fi
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 grw)  local conn_gw_count="$(iwsnmpget "8.5")";
       if [[ "${conn_gw_count}" != "Fail" ]]
@@ -83,6 +81,7 @@ grw)  local conn_gw_count="$(iwsnmpget "8.5")";
               else
               echo "99999" > ${outputpath}/${myname}_grw.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 http) local conn_web_count="$(iwsnmpget "8.7")";
       if [[ "${conn_web_count}" != "Fail" ]]
@@ -91,8 +90,10 @@ http) local conn_web_count="$(iwsnmpget "8.7")";
               else
               echo "99999" > ${outputpath}/${myname}_web.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 *)    echo "Invalid argument. Use IceWarp service snmp name: smtp, pop, imap, xmpp, grw, http,"
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 esac
 }
@@ -100,8 +101,13 @@ esac
 myname="$(basename "$0" | awk -F'.' '{print $1}')";
 configdir="/opt/icewarp/scripts/";
 outputpath="$(readcfg outputpath)";
-outputfile="${outputpath}/${myname}.mon";
+outputfile="${outputpath}/${myname}_${1}.mon";
 toolSh="/opt/icewarp/tool.sh";
+
+cleanup() {
+/usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
+}
+trap cleanup INT TERM ERR EXIT
 
 # MAIN
 touch ${outputpath}/${myname}_${1}.lck

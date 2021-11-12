@@ -47,6 +47,7 @@ msgout) local smtp_msg_out="$(iwsnmpget "16.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgout.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgin) local smtp_msg_in="$(iwsnmpget "17.1")";
       if [[ "${smtp_msg_in}" != "Fail"  ]]
@@ -55,6 +56,7 @@ msgin) local smtp_msg_in="$(iwsnmpget "17.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgin.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfail) local smtp_msg_fail="$(iwsnmpget "18.1")";
       if [[ "${smtp_msg_fail}" != "Fail"  ]]
@@ -63,6 +65,7 @@ msgfail) local smtp_msg_fail="$(iwsnmpget "18.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfail.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfaildata) local smtp_msg_fail_data="$(iwsnmpget "19.1")";
       if [[ "${smtp_msg_fail_data}" != "Fail"  ]]
@@ -71,6 +74,7 @@ msgfaildata) local smtp_msg_fail_data="$(iwsnmpget "19.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfaildata.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfailvirus) local smtp_msg_fail_virus="$(iwsnmpget "20.1")";
       if [[ "${smtp_msg_fail_virus}" != "Fail"  ]]
@@ -79,6 +83,7 @@ msgfailvirus) local smtp_msg_fail_virus="$(iwsnmpget "20.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfailvirus.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfailcf) local smtp_msg_fail_cf="$(iwsnmpget "21.1")";
       if [[ "${smtp_msg_fail_cf}" != "Fail"  ]]
@@ -87,6 +92,7 @@ msgfailcf) local smtp_msg_fail_cf="$(iwsnmpget "21.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfailcf.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfailextcf) local smtp_msg_fail_extcf="$(iwsnmpget "22.1")";
       if [[ "${smtp_msg_fail_extcf}" != "Fail"  ]]
@@ -95,6 +101,7 @@ msgfailextcf) local smtp_msg_fail_extcf="$(iwsnmpget "22.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfailextcf.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfailrule) local smtp_msg_fail_rule="$(iwsnmpget "23.1")";
       if [[ "${smtp_msg_fail_rule}" != "Fail"  ]]
@@ -103,6 +110,7 @@ msgfailrule) local smtp_msg_fail_rule="$(iwsnmpget "23.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfailrule.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfaildnsbl) local smtp_msg_fail_dnsbl="$(iwsnmpget "24.1")";
       if [[ "${smtp_msg_fail_dnsbl}" != "Fail"  ]]
@@ -111,6 +119,7 @@ msgfaildnsbl) local smtp_msg_fail_dnsbl="$(iwsnmpget "24.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfaildnsbl.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfailips) local smtp_msg_fail_ips="$(iwsnmpget "25.1")";
       if [[ "${smtp_msg_fail_ips}" != "Fail"  ]]
@@ -119,6 +128,7 @@ msgfailips) local smtp_msg_fail_ips="$(iwsnmpget "25.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfailips.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 msgfailspam) local smtp_msg_fail_spam="$(iwsnmpget "26.1")";
       if [[ "${smtp_msg_fail_spam}" != "Fail"  ]]
@@ -127,8 +137,10 @@ msgfailspam) local smtp_msg_fail_spam="$(iwsnmpget "26.1")";
         else
         echo "99999" > ${outputpath}/${myname}_msgfailspam.mon;
       fi
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 *)    echo "Invalid argument. SMTP stats: msgout, msgin, msgfail, msgfaildata, msgfailvirus, msgfailcf, msgfailextcf, msgfailrule, msgfaildnsbl, msgfailips, msgfailspam"
+      /usr/bin/rm -f "${outputpath}/${myname}_${1}.lck"
 ;;
 esac
 }
