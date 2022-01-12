@@ -1,4 +1,4 @@
-i#!/bin/bash
+#!/bin/bash
 cleanup() {
 /usr/bin/rm -f "${outputpath}/${myname}.lck"
 }
