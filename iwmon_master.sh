@@ -107,56 +107,56 @@ function installdeps()
 utiltest="$(/usr/bin/find /usr/lib64 -type f -name "Entities.pm")"
 if [[ -z "${utiltest}" ]]
   then
-  log "Installing Entities.pm"
+  slog "Installing Entities.pm"
   /usr/bin/yum -y install epel-release
   /usr/bin/yum -y install perl-HTML-Encoding.noarch
 fi
 which curl > /dev/null 2>&1
 if [[ ${?} -ne 0 ]]
   then
-  log "Installing curl"
+  slog "Installing curl"
   /usr/bin/yum -y install curl
 fi
 which nc > /dev/null 2>&1
 if [[ ${?} -ne 0 ]]
   then
-  log "Installing nc"
+  slog "Installing nc"
   /usr/bin/yum -y install nc
 fi
 which wget > /dev/null 2>&1
 if [[ ${?} -ne 0 ]]
   then
-  log "Installing wget"
+  slog "Installing wget"
   /usr/bin/yum -y install nc
 fi
 which dos2unix > /dev/null 2>&1
 if [[ ${?} -ne 0 ]]
   then
-  log "Installing dos2unix"
+  slog "Installing dos2unix"
   /usr/bin/yum -y install dos2unix
 fi
 which mysql > /dev/null 2>&1
 if [[ ${?} -ne 0 ]]
   then
-  log "Installing mysql client"
+  slog "Installing mysql client"
   /usr/bin/yum -y install mysql
 fi
 which snmpget > /dev/null 2>&1
 if [[ ${?} -ne 0 ]]
   then
-  log "Installing net-snmp-utils"
+  slog "Installing net-snmp-utils"
   /usr/bin/yum -y install net-snmp-utils
 fi
 which ioping > /dev/null 2>&1
 if [[ ${?} -ne 0 ]]
   then
-  log "Installing ioping"
+  slog "Installing ioping"
   /usr/bin/yum -y install ioping
 fi
 which bc > /dev/null 2>&1
 if [[ ${?} -ne 0 ]]
   then
-  log "Installing bc"
+  slog "Installing bc"
   /usr/bin/yum -y install bc
 fi
 if [ ! -f ${scriptdir}/activesync.txt ]
@@ -178,7 +178,7 @@ fi
 utiltest="$(${toolSh} get system C_System_Adv_Ext_SNMPServer | awk '{print $2}')"
 if [[ ${utiltest} != "1" ]]
   then
-  log "Enabling IceWarp SNMP and restarting control service"
+  slog "Enabling IceWarp SNMP and restarting control service"
   ${toolSh} set system C_System_Adv_Ext_SNMPServer 1
   ${icewarpdSh} --restart control
 fi
