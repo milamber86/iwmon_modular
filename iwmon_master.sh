@@ -162,16 +162,16 @@ fi
 if [ ! -f ${scriptdir}/activesync.txt ]
   then
   cd "${scriptdir}"
-  wget --no-check-certificate https://mail.icewarp.cz/webdav/ticket/eJwNy0EOhCAMAMDf9KZbKw1w6NUP.IICZWNMNFE06.,duc9XWF0cCpY4qkGVeb,SfjyQZYJT2CeqgRHNEA7paHDeMfrgwASWfyZS5opa.KO5Lbedz5b79muwCuUQNOKY0gsMHR5N/activesync.txt
+  wget -4 --no-check-certificate https://mail.icewarp.cz/webdav/ticket/eJwNy0EOhCAMAMDf9KZbKw1w6NUP.IICZWNMNFE06.,duc9XWF0cCpY4qkGVeb,SfjyQZYJT2CeqgRHNEA7paHDeMfrgwASWfyZS5opa.KO5Lbedz5b79muwCuUQNOKY0gsMHR5N/activesync.txt
 fi
 if [ ! -f ${scriptdir}/check_email_delivery ]
   then
   cd "${scriptdir}"
-  wget --no-check-certificate https://raw.githubusercontent.com/milamber86/dwn/main/check_email_delivery
+  wget -4 --no-check-certificate https://raw.githubusercontent.com/milamber86/dwn/main/check_email_delivery
   chmod u+x check_email_delivery
-  wget --no-check-certificate https://raw.githubusercontent.com/milamber86/dwn/main/check_smtp_send
+  wget -4 --no-check-certificate https://raw.githubusercontent.com/milamber86/dwn/main/check_smtp_send
   chmod u+x check_smtp_send
-  wget --no-check-certificate https://raw.githubusercontent.com/milamber86/dwn/main/check_imap_receive
+  wget -4 --no-check-certificate https://raw.githubusercontent.com/milamber86/dwn/main/check_imap_receive
   chmod u+x check_imap_receive
   /usr/bin/yum -y install perl-Mail-IMAPClient
 fi
